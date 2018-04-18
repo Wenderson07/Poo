@@ -1,0 +1,21 @@
+package wenderson;
+
+import java.util.ArrayList;
+
+public class ArrayListAluguel {
+	ArrayList<Aluguel> array = new ArrayList<Aluguel>();
+	
+	public void inserir(Aluguel v) {
+		array.add(v);
+	}
+	
+	public Aluguel procurar(int x){
+		for (Aluguel aluguel : array) {
+			if (aluguel.getCpfCliente() == x) {
+				return aluguel;
+			}
+		}
+		System.out.println("cliente " + x + " sem alugueis");
+		return null;
+	}
+}
