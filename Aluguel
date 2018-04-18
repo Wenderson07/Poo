@@ -1,0 +1,25 @@
+package wenderson;
+
+public class Aluguel {
+	private int cpfCliente;
+	private String placaVeiculo;
+	private double valor;
+	
+	public Aluguel(int cpfCliente, String placaVeiculo, double valor) {
+		super();
+		this.cpfCliente = cpfCliente;
+		this.placaVeiculo = placaVeiculo;
+		this.valor = valor;
+	}
+	
+	public int getCpfCliente() {
+		return cpfCliente;
+	}
+	public String getPlacaVeiculo() {
+		return placaVeiculo;
+	}
+	public double getValor() {
+		return valor;
+	}
+	
+}
