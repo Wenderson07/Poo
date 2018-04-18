@@ -1,0 +1,20 @@
+package wenderson.veiculos;
+
+public class Caminhao extends Veiculo{
+	private int carga;
+
+	public Caminhao(int x,String marca, String modelo, int anoFabricação, String placa, double valorDiaria,double valorDoBem) {
+		super(marca, modelo, anoFabricação, placa, valorDiaria, valorDoBem);
+		int carga = x;
+	}
+
+	public double valorDoeguro() {
+		double seguro = (valorDoBem * (valorDoBem * 0.08))/365;
+		return seguro;
+	}
+
+	public int getCarga() {
+		return carga;
+	}
+
+}
