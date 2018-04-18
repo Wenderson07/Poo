@@ -1,0 +1,169 @@
+public class MinhaLocadora implements Locadora{
+	
+	private RepositorioDeVeiculos Veiculo;
+	ArrayListDeCliente Cliente = new ArrayListDeCliente();
+	ArrayListAluguel Aluguel = new ArrayListAluguel();
+	
+	public MinhaLocadora(RepositorioDeVeiculos rep) {
+		Veiculo = rep;
+	}
+	
+	public void inserir(Veiculo v) throws VeiculoJaCadastrado {
+		Veiculo aux;
+		try {
+			aux = pesquisar(v.getPlaca());
+			throw new VeiculoJaCadastrado(v.getPlaca());
+		} catch (VeiculoNaoCadastrado e) {
+		  Veiculo.inserir(v);
+		}
+	}
+	
+	public void inserir(Cliente c) throws ClienteJaCadastrado {
+		Cliente aux;
+		try {
+			aux = Cliente.procurar(c.getCpf());
+			throw new ClienteJaCadastrado(c.getCpf());
+		} catch (ClienteNaoCadastrado e) {
+		  Cliente.inserir(c);
+		}
+	}
+	
+	public Veiculo pesquisar(String placa) throws VeiculoNaoCadastrado {
+		return Veiculo.procurar(placa);
+	} 
+
+    public ArrayList<Veiculo> pesquisarMoto(int cilindrada) {
+    	ArrayList<Veiculo> aux = new ArrayList<Veiculo>();
+    	for (Veiculo x : Veiculo.array()) {
+    		if ( (x instanceof Moto)&&( ((Moto)x).getCilindrada() >= cilindrada) ) {
+				aux.add(x);
+			}
+		}
+		return aux;
+	}
+	// tipo de carro
+	// 1 (passeio), 2 (SUC), 3 (pickup)
+    public ArrayList<Veiculo> pesquisarCarro(int tipoCarro) {
+    	ArrayList<Veiculo> aux = new ArrayList<Veiculo>();
+      	for (Veiculo x : Veiculo.array()) {
+    		if ( (x instanceof Carro)&&( ((Carro)x).getTipoCarro() == tipoCarro) ) {
+				aux.add(x);
+			}
+		}
+		return aux;
+	}
+    public ArrayList<Veiculo> pesquisarCaminhao(int carga) {
+    	ArrayList<Veiculo> aux = new ArrayList<Veiculo>();
+    	for (Veiculo x : Veiculo.array()) {
+    		if ( (x instanceof Caminhao)&&( ((Caminhao)x).getCarga() >= carga) ) {
+				aux.add(x);
+			}
+		}
+		return aux;
+	}
+    public ArrayList<Veiculo> pesquisarOnibus(int passageiros) {
+    	ArrayList<Veiculo> aux = new ArrayList<Veiculo>();
+    	for (Veiculo x : Veiculo.array()) {
+    		if ( (x instanceof Onibus)&&( ((Onibus)x).getPassageiros() >= passageiros) ) {
+				aux.add(x);
+			}
+		}
+		return aux;
+	}
+    
+    public double calcularAluguel(String placa, int dias) throws VeiculoNaoCadastrado {
+    	Veiculo aux;
+		aux = pesquisar(placa);
+		return aux.Aluguel(dias);
+	}
+    
+    public double consultarSeguro(String placa) throws VeiculoNaoCadastrado {
+    	Veiculo aux;
+		aux = pesquisar(placa);
+		return aux.seguro();
+    }
+    
+    public void registrarAluguel(String placa, int dias, Cliente c) throws VeiculoNaoCadastrado, VeiculoAlugado, ClienteNaoCadastrado {
+    	Cliente aux;
+    	Veiculo v;
+    	try {
+			aux = Cliente.procurar(c.getCpf());
+			throw new ClienteJaCadastrado(c.getCpf());
+		} catch (ClienteJaCadastrado e) {	
+			double valor = calcularAluguel(placa, dias);
+			v = pesquisar(placa);
+			if (v.getEstado() == 1) {
+				throw new VeiculoAlugado(placa);
+			}else {
+				v.setEstado(1);
+			}
+			Aluguel alu = new Aluguel(c.getCpf(),placa,valor);
+			Aluguel.inserir(alu);
+		}
+    	
+    }
+	
+    public void registrarDevolucao(String placa, Cliente c) throws VeiculoNaoCadastrado, VeiculoNaoAlugado, ClienteNaoCadastrado {
+    	Cliente aux;
+    	Veiculo v;
+    	Aluguel x;
+    	try {
+			aux = Cliente.procurar(c.getCpf());
+			throw new ClienteJaCadastrado(c.getCpf());
+		} catch (ClienteJaCadastrado e) {
+			v = pesquisar(placa);
+			if (v.getEstado() == 0) {
+				throw new VeiculoNaoAlugado(placa);
+			}else {
+				v.setEstado(0);
+			}
+		}
+	}
+   
+	// tipo de veiculo
+	// 0 (todos), 1 (moto), 2 (carro), 3 (caminhão), 4 (ônibus)
+    public void depreciarVeiculos(int tipo, double taxaDepreciacao) {
+		switch (tipo) {
+		case 0:
+            
+			break;
+		case 1:
+            pesquisarMoto(0);
+			break;
+		case 2:
+            pesquisarCarro(1);
+			break;
+		case 3:
+            pesquisarCaminhao(0);
+			break;
+		case 4:
+            pesquisarOnibus(0);
+			break;
+		}
+	}
+    public void aumentarDiaria(int tipo, double taxaAumento) {
+		switch (tipo) {
+		case 0:
+            
+			break;
+		case 1:
+            pesquisarMoto(0);
+			break;
+		case 2:
+            pesquisarCarro(1);
+			break;
+		case 3:
+            pesquisarCaminhao(0);
+			break;
+		case 4:
+            pesquisarOnibus(0);
+			break;
+		}
+	}
+    public double faturamentoTotal(int tipo) {
+		return 0;
+	}
+    public int quantidadeTotalDeDiarias(int tipo) {
+		return 0;
+	}
+}
