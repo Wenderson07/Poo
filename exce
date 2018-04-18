@@ -1,0 +1,9 @@
+package wenderson.excecoes;
+
+public class ClienteJaCadastrado extends Exception {
+
+	public ClienteJaCadastrado(int n) {
+		super("O Cliente com numero " + n + "ja encontra-se cadastrado.");
+	}
+
+}
