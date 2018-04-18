@@ -1,0 +1,30 @@
+package wenderson;
+
+import java.util.ArrayList;
+
+import wenderson.excessoes.VeiculoNaoCadastrado;
+import wenderson.veiculos.Moto;
+import wenderson.veiculos.Veiculo;
+
+public class ArrayListDeVeiculos implements RepositorioDeVeiculos {
+
+	ArrayList<Veiculo> array = new ArrayList<Veiculo>();
+	
+	public void inserir(Veiculo v) {
+		array.add(v);
+	}
+	
+	public Veiculo procurar(String x) throws VeiculoNaoCadastrado{
+		for (Veiculo veiculo : array) {
+			if (veiculo.getPlaca() == x) {
+				return veiculo;
+			}
+		}
+		throw new VeiculoNaoCadastrado(x);
+	}
+
+	public ArrayList<Veiculo> array() {
+		return array;
+	}
+	
+}
