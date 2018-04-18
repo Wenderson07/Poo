@@ -1,0 +1,68 @@
+
+public abstract class Veiculo {
+	private String marca;
+	private String modelo;
+	private int anoFabricação;
+	private String placa;
+	private double valorDiaria;
+	protected double valorDoBem;
+	private int estado = 0;
+	
+	public Veiculo(String marca, String modelo, int anoFabricação, String placa, double valorDiaria,double valorDoBem) {
+		this.marca = marca;
+		this.modelo = modelo;
+		this.anoFabricação = anoFabricação;
+		this.placa = placa;
+		this.valorDiaria = valorDiaria;
+		this.valorDoBem = valorDoBem;
+	}
+
+	public abstract double seguro();
+	
+	public double Aluguel(int dias) {
+		double seguro = seguro();
+		double aluguel = (valorDiaria + seguro) * dias;
+		return aluguel;
+	}
+	
+	public String getMarca() {
+		return marca;
+	}
+
+	public String getModelo() {
+		return modelo;
+	}
+
+	public int getAnoFabricação() {
+		return anoFabricação;
+	}
+
+	public String getPlaca() {
+		return placa;
+	}
+
+	public double getValorDiaria() {
+		return valorDiaria;
+	}
+
+	public void setValorDiaria(double valorDiaria) {
+		this.valorDiaria = valorDiaria;
+	}
+
+	public double getValorDoBem() {
+		return valorDoBem;
+	}
+
+	public void setValorDoBem(double valorDoBem) {
+		this.valorDoBem = valorDoBem;
+	}
+	
+	public double getEstado() {
+		return estado;
+	}
+	
+	public void setEstado(int estado) {
+		this.estado = estado;
+	}
+	
+}
