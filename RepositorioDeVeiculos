@@ -1,0 +1,12 @@
+package wenderson;
+
+import java.util.ArrayList;
+
+import wenderson.excessoes.VeiculoNaoCadastrado;
+import wenderson.veiculos.Veiculo;
+
+public interface RepositorioDeVeiculos {
+	public abstract void inserir(Veiculo c);
+	public abstract Veiculo procurar(String num) throws VeiculoNaoCadastrado;
+	public abstract ArrayList<Veiculo> array();
+}
