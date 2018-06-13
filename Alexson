@@ -1,0 +1,67 @@
+package bot;
+
+import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
+
+public class Alexson extends TelegramLongPollingBot{
+
+	@Override
+	public String getBotUsername() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+/*
+	public String pegarMensagem() {
+		Update new update 
+		String mensagem = Update.getMessage().getText();
+		System.out.println(mensagem);
+		return null;
+
+	}*/
+	public void onUpdateReceived(Update update) {
+		SendMessage send = new SendMessage();
+		String nome = update.getMessage().getFrom().getFirstName();
+		send.setChatId(update.getMessage().getChatId());
+		System.out.println("Nome:" + update.getMessage().getFrom().getFirstName()+ " ID: "+ update.getMessage().getChatId() + " " + update.getMessage().getText());
+		String mensagem = update.getMessage().getText();
+		//send.setText("Oi " + nome + ". Você digitou " + update.getMessage().getText());
+		switch (mensagem) {
+		case "1":
+			send.setText("Digite o ano:");
+			String outraMensagem = update.getMessage().getText();
+			System.out.println("Outra é = a " + outraMensagem );
+			switch(outraMensagem) {
+				case "2018":
+				send.setText("Você quer os pagamentos de 2018 ?");
+				send.setText("Digite o ano:");
+				mensagem = update.getMessage().getText();
+				switch(mensagem) {
+					case "s":
+						send.setText("Okay, buscando");
+						break;
+				}
+				break;
+			}
+			break;
+		case "inserir associado":
+			send.setText("Digite os dados do associado");
+		default:
+			send.setText("Olá " + update.getMessage().getFrom().getFirstName() + " essa são as opções disponiveis:\n" );
+			break;
+		}
+		try {
+			execute(send);
+		} catch (TelegramApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();}
+	}
+
+	@Override
+	public String getBotToken() {
+		// TODO Auto-generated method stub
+		return "528994101:AAE656HO54G_kcA_WSPzkTNnZrQPXLpF0Xo";
+	}
+
+}
