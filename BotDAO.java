@@ -4,30 +4,28 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.function.LongToIntFunction;
-
 import org.telegram.telegrambots.api.objects.Update;
 
-import associacao.Associacao;
 import associacao.Associado;
 import bancoDeDados.Conexao;
-import wenderson.*;
 import excecoes.*;
 import bancoDeDados.*;
-import telegram.*;
 
 public class BotDao {
 
 	AssociacaoDAO associacaoDAO = new AssociacaoDAO();
-	public double pagamentosAssociado( Long id) {
+	public double pagamentosAssociado( Long id, Update update) {
 		Connection con = Conexao.getConnection();
 		PreparedStatement statement = null;
+		Bot bote = new Bot();
 		double pagamentos = 0;
 		try {
 			statement = con.prepareStatement("select valor from associacao.pagamento where associado = "+id+"");
 			ResultSet rs = statement.executeQuery();
 		while(rs.next()) {
-				pagamentos += rs.getInt("valor");}
+				pagamentos += rs.getInt("valor");
+				// Faz Estilo calcular Frequencia; Se quiser adiciona mais coisas no Povoar, calcula a taxa e gg
+				bote.imprimirMensagem("Taxa:" + rs.getString("taxa") + " Vigencia:" + rs.getInt("vigencia"), update);}
 		}catch(Exception e) {
 		}
 		Conexao.closeConnection(con);
@@ -71,8 +69,9 @@ public class BotDao {
 			statement = con.prepareStatement("select data from associacao.frequencia where associado = "+id+"");
 			ResultSet rsFrequencia = statement.executeQuery();
 			while(rsFrequencia.next()){
-				if(data ==  rsFrequencia.getLong("data")) {
+				if(rsFrequencia.getLong("data") == data) {
 					presente = "sim";
+					return presente;
 					}else {
 						presente = "não";
 					}
@@ -89,7 +88,8 @@ public class BotDao {
 				statement = con.prepareStatement("select * from associacao.associado where numero like "+id+"");
 				ResultSet rs = statement.executeQuery();	
 				while(rs.next()) { 
-					aux = new Associado(rs.getInt("numero"), rs.getString("nome"), rs.getString("telefone"), rs.getLong("nascimento"),rs.getLong("data"),rs.getInt("associacao"));
+					aux = new Associado(rs.getInt("numero"), rs.getString("nome"), rs.getString("telefone"), rs.getLong("nascimento"),rs.getLong("data"));
+					aux.setAssociacao(rs.getInt("associacao"));
 					}
 			}catch(SQLException e){
 				throw new AssociacaoNaoExistente();
