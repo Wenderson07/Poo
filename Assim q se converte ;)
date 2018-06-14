@@ -1,0 +1,9 @@
+
+			String x = ("02/04/1997");
+			String[] partes = x.split("/");
+			int dia =Integer.parseInt(partes[0]);
+			int mes =Integer.parseInt(partes[1]);
+			int ano = Integer.parseInt(partes[2]);
+			GregorianCalendar gc = new GregorianCalendar();
+			gc.set(ano, mes, dia);
+			long data = gc.getTimeInMillis();
