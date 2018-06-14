@@ -1,0 +1,31 @@
+package telegram;
+import org.telegram.telegrambots.ApiContextInitializer;
+import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
+
+
+public class Main {
+
+	public static void main(String[] args) {
+		ApiContextInitializer.init();
+		TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+		
+		Bot bot = new Bot();
+		Povoar povoar = new Povoar();
+		try {
+			povoar.povoador();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			telegramBotsApi.registerBot(bot);
+			
+		}catch (TelegramApiRequestException e) {
+			e.getMessage();
+}
+	}
+
+}
+
