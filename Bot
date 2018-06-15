@@ -1,0 +1,135 @@
+package telegram;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
+import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
+
+import excecoes.AssociacaoNaoExistente;
+import excecoes.AssociadoJaExistente;
+import excecoes.ValorInvalido;
+import wenderson.MinhaAssociacao;
+
+
+public class Bot extends TelegramLongPollingBot{
+	MinhaAssociacao controle = new MinhaAssociacao();
+	BotDao botDao = new BotDao();
+	boolean c1 = false; // boas vindas
+	boolean c2 = false; //Opções
+	boolean c3 = false; //Ano
+	boolean c4 = false;
+	boolean c5 = false; //Validação Ano
+	boolean c6 = false;
+	boolean c7 = false;
+	boolean c8 = false;
+	boolean c9 = false;
+	boolean c10 = false;
+	String inicial = null;
+	String fim = null;
+	
+	public String getBotUsername() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+ 
+	public void imprimirMensagem(String texto,Update update) {
+		SendMessage send = new SendMessage();
+		send.setText(texto);
+		send.setChatId(update.getMessage().getChatId());
+		try {
+			sendMessage(send);
+			System.out.println("Mensagem enviada!");
+		} catch (TelegramApiException e) {
+			e.getMessage();
+		}
+	}
+	
+	public void onUpdateReceived(Update update) {
+		
+		SendMessage send = new SendMessage();
+		send.setChatId(update.getMessage().getChatId());
+		String nome = update.getMessage().getFrom().getFirstName();
+		System.out.println("Nome: " + update.getMessage().getFrom().getFirstName()+ " - ID: "+ update.getMessage().getChatId() + " || Text: " + update.getMessage().getText());
+		BotDao dao = new BotDao();
+		
+		if(!(c1)) {
+			String mensagem = "Bem Vindo " + update.getMessage().getFrom().getFirstName() + " ! Suas opções são:\n> Consultar Pagamentos\n> Consultar Frequencia";
+			imprimirMensagem(mensagem,update);
+			c1 = true;
+		}
+		if(!(c2)){
+			String resp = update.getMessage().getText();
+			System.out.println("Resp1: " + resp);
+			if(resp.equals("Pagamento") || resp.equals("pagamento") || resp.equals("Pagamentos") || resp.equals("pagamentos") || resp.equals("pag") || resp.equals("Pag")) {
+				imprimirMensagem("Digite o ano!",update);
+				c3 = true;
+				c2 = true;
+			}
+			if(resp.equals("Frequencia") || resp.equals("frequencia") || resp.equals("freq") || resp.equals("Freq")) {
+				long primeiraData = dao.primeiraReuniao(update.getMessage().getFrom().getId());
+				 DateFormat df = new SimpleDateFormat ("dd/MM/yyyy");
+			     df.setTimeZone (TimeZone.getTimeZone ("GMT"));
+			     df.format(primeiraData);
+			     System.out.println(primeiraData);
+				imprimirMensagem("Digite a Data Inicial:" + "a primeira reuniao foi realizada em " + df.format(primeiraData)+"",update);
+				resp = update.getMessage().getText();
+				System.out.println("Resp2 || i: " + resp);
+				c6 = true;
+			}
+		}
+		if(c3) {
+			String resp = update.getMessage().getText();
+			System.out.println("Resp2 || i: " + resp);
+			int i = Integer.parseInt(resp);
+			if(i == 2017 || i == 2018) {
+				c4 = true;
+			} else {
+				c5 = true;
+			}
+			c3 = false;
+		}
+		if(c4) {
+			String vigencia = update.getMessage().getText();
+			System.out.println("Vigencia: " + vigencia);
+			dao.consultarPagamentos(update.getMessage().getChatId(), vigencia, update);
+			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
+			c4 = false;
+			c2 = false;
+		}
+		if(c5) {
+			imprimirMensagem("Ano Invalido!\n" + update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
+			String resp = update.getMessage().getText();
+			System.out.println("Resp3: " + resp);
+			c2 = false;
+			c5 = false;
+		}
+		if(c6) {
+			inicial = update.getMessage().getText();
+			System.out.println("Inicial: " + inicial);
+			long  ultimaData= dao.ultimaReuinao(update.getMessage().getFrom().getId());
+			DateFormat df = new SimpleDateFormat ("dd/MM/yyyy");
+		    df.setTimeZone (TimeZone.getTimeZone ("GMT"));
+		    df.format(ultimaData);
+			imprimirMensagem("Digite a Data Final:" + "a primeira reuniao foi realizada em " + df.format(ultimaData)+"",update);
+			String fim = update.getMessage().getText();
+			System.out.println("Final: " + fim);
+			//c7 = true;
+		}
+		if(c7) {
+			String inicial = update.getMessage().getText();
+			System.out.println("Inicial: " + inicial);
+			String fim = update.getMessage().getText();
+			System.out.println("Final: " + fim);
+		}						
+	}
+	
+	@Override
+	public String getBotToken() {
+		// TODO Auto-generated method stub
+		return "334178476:AAEIe46gtlxOnZoZSEfnUiaGKnT5Y0RzgJY";
+	}
+}
