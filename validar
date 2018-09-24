@@ -1,0 +1,103 @@
+package prova1.wenderson;
+
+public class ValidacaoDeDados {
+
+	
+
+	
+	public boolean validarCompra(int x, int f1, int f2) {
+			return validarId(x) && validarNumerosDiferentes(f1, f2) ;
+	}
+	public boolean validarCadastroAnimal(Animal a, Fazenda f) {
+		return validarAnimal(a) && validarFazenda(f);		
+	}
+	
+	public boolean validarFazenda(Fazenda f) {
+		int id = f.getIdFazenda();
+		String nome= f.getNomeFazenda();
+		if(validarId(id)==true && validarNome(nome) == true) {
+			return true;
+		}
+		return false;
+	}
+	
+
+	
+	public boolean validarAnimal(Animal a) {
+		int id = a.getNumAnimal();
+		String nome=a.getNomeAnimal();
+		int dia=a.getDiaNascimento();
+		int mes=a.getMesNascimento();
+		int ano=a.getAnoNascimento();
+		int genero=a.getGenero();
+		int compra=a.getValorDeCompra();
+		int venda=a.getValorDeVenda();
+		if(validarId(id)== true  && validarNome(nome) == true && validarData(dia,mes,ano)== true && validarGenero(genero)==true && validarCompra(compra) == true && validarVenda(venda)==true) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean validarNumerosDiferentes(int x, int y) {
+		if(x == y) {
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	public boolean validarNome(String nome) {
+		if(nome != null && nome != "") {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean validarId(int id) {
+		if(id >=1) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean validarVenda(int valor) {
+		if(valor>=0) {
+			return true;
+		}
+		return false;
+	}
+		 
+	public boolean validarCompra(int valor) {
+		if(valor >=0) {
+			return true;
+		}
+		return false;
+	}
+		 
+	public boolean validarData(int dia, int mes, int ano) {
+		if(dia >=1 && dia <=31) {
+			if(mes>=1 && mes<=12) {
+				if(ano>=0 && ano <= 2018) {
+					return true;
+				}
+			}
+		}		
+		return false;
+		
+	}
+	public boolean validarTipo(int tipo) {
+		if(tipo >=0 && tipo <=3 ) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	public boolean validarGenero(int genero) {
+		if(genero >=0 && genero <2 ) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+}
