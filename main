@@ -1,0 +1,264 @@
+	package prova1.wenderson;
+
+import java.util.ArrayList;
+
+import prova1.wenderson.*;
+
+public class SistemaDeRegistro implements Rastreavel{
+	private ArrayListDeFazendas fazendas= new ArrayListDeFazendas();
+	private ArrayListDeAnimais animais = new ArrayListDeAnimais();
+	private ValidacaoDeDados validar = new ValidacaoDeDados();
+	@Override
+	public boolean cadastrarFazenda(Fazenda f) {
+		Fazenda aux;
+		if(validar.validarFazenda(f)) {
+			try {
+				aux =fazendas.pesquisar(f.getIdFazenda());
+				return false;
+			} catch (FazendaInexistente e) {
+				fazendas.inserir(f);		
+				return true;
+			}
+		}return false;
+	}
+
+	@Override
+	public boolean cadastrarAnimal(Animal a, Fazenda f) {
+		if(validar.validarCadastroAnimal(a, f)) {
+			try{
+				Fazenda aux;
+				Animal aux2;
+				aux = fazendas.pesquisar(f.getIdFazenda());
+				try {
+					aux2 = animais.pesquisar(a.getNumAnimal());
+				} catch (AnimalInexistente e) {
+					 {
+						 a.setFazenda(f.getIdFazenda());
+						animais.inserir(a);
+						aux.gado.add(a);
+						return true;
+				}
+				}
+			}catch (FazendaInexistente e ) {
+				return false;
+			}
+		}
+			return false;
+	}
+
+	@Override
+	public boolean compra(int comprado, int fazendaCompra, int fazendaVenda) {
+		Fazenda fazendaOrigem;
+		Fazenda fazendaDestino;
+		Animal animalCompra;
+		if(validar.validarCompra(comprado,fazendaCompra, fazendaVenda)== false){
+			return false;
+		}
+		try {
+			fazendaOrigem = fazendas.pesquisar(fazendaVenda);
+			fazendaDestino = fazendas.pesquisar(fazendaCompra);
+			animalCompra = animais.pesquisar(comprado);
+			if(animalCompra.podeSerComercializado() == false) {
+				return false;
+			}
+			fazendaOrigem.gado.remove(animalCompra);
+			fazendaDestino.gado.add(animalCompra);
+			animais.trocaDeFazenda(comprado,fazendaCompra);
+			return true;
+		}catch (FazendaInexistente | AnimalInexistente erroCompra) {
+			System.out.println("Erro na Compra de Animal");
+			return false;}
+		
+	}
+
+	@Override
+	public boolean venda(int vendido, int fazendaVenda, int fazendaCompra) {
+		return compra(vendido, fazendaCompra, fazendaVenda);
+	}
+
+	@Override
+	public boolean abate(int numeroAnimal, int identificadorFazenda) {
+		Animal animal;
+		Fazenda fazenda;
+		try {
+			animal = animais.pesquisar(numeroAnimal);
+			fazenda = fazendas.pesquisar(identificadorFazenda);
+			if(animal.isAtivo() == false || animal.isMorte() == true) {
+				return false;
+			}
+			animal.abate();
+			return true;
+		} catch (AnimalInexistente  | FazendaInexistente erroAbate) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean morte(int numeroAnimal, int identificadorFazenda) {
+		Animal animal;
+		Fazenda fazenda;
+		if(validar.validarId(numeroAnimal) == false || validar.validarId(identificadorFazenda)==false) {
+			return false;
+		}
+		try {
+			animal = animais.pesquisar(numeroAnimal);
+			if(animal.isAtivo() == false || animal.isAbate() == true) {
+				return false;
+			}
+			fazenda = fazendas.pesquisar(identificadorFazenda);
+			animal.morte();
+			return true;
+		} catch (AnimalInexistente  | FazendaInexistente erroMorte) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean vacina(int numeroAnimal, int identificadorFazenda) {
+		Animal animal;
+		Fazenda fazenda;
+		if(validar.validarId(numeroAnimal) == false || validar.validarId(identificadorFazenda)==false) {
+			return false;
+		}
+		try {
+			animal = animais.pesquisar(numeroAnimal);
+			fazenda = fazendas.pesquisar(identificadorFazenda);
+			if(animal.isAtivo() == false || animal.isVendido() == true) {
+				return false;
+			}
+			animal.vacina();
+			return true;
+		} catch (AnimalInexistente  | FazendaInexistente erroVacina) {
+			return false;
+	}
+}
+
+	@Override
+	public int listarResumoDeAnimais(int fazenda, int tipo, boolean jovem, boolean macho) {
+		Fazenda aux;// tipo , 0 = todos, 1 = boi, 2 = sui, 3 = cap
+		int quantidadeDeBovinos = 0;
+		int quantidadeDeCaprinos = 0;
+		int quantidadeDeSuinos = 0;
+		int pesquisaGenero;
+		if(macho == true) {
+			pesquisaGenero = 0;
+		}else {
+			pesquisaGenero = 1;
+		}
+		if(validar.validarId(fazenda) == false || validar.validarTipo(tipo)==false) {
+			return 0;
+		}
+			try {
+				aux = fazendas.pesquisar(fazenda); //pesquisa a fazenda
+				for (Animal animal: aux.gado) {
+					if(animal instanceof Bovino) {
+						if(animal.getGenero() == pesquisaGenero && ((Bovino)animal).adulto() != jovem && animal.isAtivo() == true) {
+							quantidadeDeBovinos++;
+						}
+					}
+					else if(animal instanceof Caprino) {
+						if (animal.getGenero() == pesquisaGenero &&  ((Caprino)animal).adulto() != jovem && animal.isAtivo() == true) {
+							quantidadeDeCaprinos++;
+					}}
+					else if(animal instanceof Suino) {
+						if (animal.getGenero() == pesquisaGenero &&  ((Suino)animal).adulto() != jovem && animal.isAtivo() == true) {
+							quantidadeDeSuinos++;
+						}
+					}
+				}		
+			}catch(Exception e ) {
+				System.out.println("Erro na busca de  animais nas fazenda");
+			}
+			if(tipo == 1) {
+				return quantidadeDeBovinos;	
+			}else if(tipo ==3) {
+				return quantidadeDeCaprinos;
+			}else if(tipo == 2) {
+				return quantidadeDeSuinos;
+			}else {
+				return quantidadeDeBovinos + quantidadeDeCaprinos + quantidadeDeSuinos;
+			}
+		
+	}
+
+	@Override
+	public double faturamentoAnual(int fazenda, int tipo) {
+		double faturamentoBovino=0;
+		double faturamentoCaprino=0;
+		double faturamentoSuino=0;
+		Fazenda aux;// tipo , 0 = todos, 1 = boi, 2 = sui, 3 = cap
+		ArrayList<Animal> auxVenda = new ArrayList<Animal>();
+		try {
+			aux = fazendas.pesquisar(fazenda); //pesquisa a fazenda
+			auxVenda = animais.animaisVendidos();
+			for(Animal animal: auxVenda) {
+				if(animal instanceof Bovino) {
+					if(animal.getFazenda() == fazenda) {
+						faturamentoBovino+=animal.getValorDeVenda(); 
+					}
+				}
+				else if(animal instanceof Caprino) {
+					if(animal.getFazenda()== fazenda) {
+						faturamentoCaprino+=animal.getValorDeVenda(); 
+				}}
+				else if(animal instanceof Suino) {
+					if(animal.getFazenda()== fazenda) {
+						faturamentoSuino+= animal.getValorDeVenda();
+					}
+				}
+			}
+		
+		}catch(Exception e ) {
+			System.out.println("Erro na busca de  animais nas fazenda");
+		}	
+		if(tipo == 1) {
+			return faturamentoBovino;	
+		}else if(tipo ==3) {
+			return faturamentoCaprino;
+		}else if(tipo == 2) {
+			return faturamentoSuino;
+		}else {
+			System.out.println(faturamentoBovino + faturamentoCaprino + faturamentoSuino);
+			return faturamentoBovino + faturamentoCaprino + faturamentoSuino;
+		}
+	}
+
+	@Override
+	public double perdaAnual(int fazenda, int tipo) {
+		double perdaBovino=0;
+		double perdaCaprino=0;
+		double perdaSuino=0;
+		ArrayList<Animal> auxPerda = new ArrayList<Animal>();
+		Fazenda aux;// tipo , 0 = todos, 1 = boi, 2 = sui, 3 = cap
+		try {
+			aux = fazendas.pesquisar(fazenda); //pesquisa a fazenda
+			auxPerda = animais.animaisMortos();
+			for(Animal animal: aux.gado) {
+				if(animal instanceof Bovino) {
+					if(animal.isAtivo() == false && animal.isMorte()) {
+						perdaBovino+=animal.getValorDeVenda(); 
+					}
+				}
+				else if(animal instanceof Caprino) {
+					if (animal.isAtivo() == false) {
+						perdaCaprino+=animal.getValorDeVenda(); 
+				}}
+				else if(animal instanceof Suino) {
+					if(animal.isVendido() == false) {
+						perdaSuino+= animal.getValorDeVenda();
+					}
+				}
+			}		
+		}catch(Exception e ) {
+			System.out.println("Erro na busca de  animais na fazenda");
+		}	
+		if(tipo == 1) {
+			return perdaBovino;	
+		}else if(tipo ==3) {
+			return perdaCaprino;
+		}else if(tipo == 2) {
+			return perdaSuino;
+		}else 
+			return perdaBovino + perdaCaprino + perdaSuino;
+		}
+	}
