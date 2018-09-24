@@ -33,7 +33,7 @@ public class SistemaDeRegistro implements Rastreavel{
 					aux2 = animais.pesquisar(a.getNumAnimal());
 				} catch (AnimalInexistente e) {
 					 {
-						 a.setFazenda(f.getIdFazenda());
+						a.setFazenda(f.getIdFazenda());
 						animais.inserir(a);
 						aux.gado.add(a);
 						return true;
@@ -218,7 +218,6 @@ public class SistemaDeRegistro implements Rastreavel{
 		}else if(tipo == 2) {
 			return faturamentoSuino;
 		}else {
-			System.out.println(faturamentoBovino + faturamentoCaprino + faturamentoSuino);
 			return faturamentoBovino + faturamentoCaprino + faturamentoSuino;
 		}
 	}
