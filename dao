@@ -1,0 +1,204 @@
+package bancoDeDados;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+
+import associacao.Associado;
+import associacao.AssociadoRemido;
+import excecoes.AssociadoNaoExistente;
+
+public class AssociadoDAO {
+	
+	public void incluirAssociado(int associacao, Associado a) {
+		java.sql.Connection c = Conexao.getConnection();
+		java.sql.PreparedStatement stmt = null;
+		
+		if(Conexao.isConnection(c)) {
+			try {
+				stmt = c.prepareStatement("insert into associado (numero,nome,telefone,nascimento,data,remissao,associacao) values (?,?,?,?,?,?,?)");
+				stmt.setInt(1, a.getNumero());
+				stmt.setString(2, a.getNome());
+				stmt.setString(3, a.getTelefone());
+				stmt.setLong(4, a.getDataNascimento());
+				stmt.setLong(5, a.getDataAssociacao());
+				stmt.setLong(6, 0);
+				if(a instanceof AssociadoRemido) {
+					stmt.setLong(6, ((AssociadoRemido) a).getDataRemissao());
+				}
+				stmt.setInt(7, associacao);
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			} finally {			
+				Conexao.closeConnection(c, stmt);
+			}
+		} else System.out.println("Erro ao Conectar com o Banco de Dados!");
+	}
+	
+	
+	public Associado procurarAssociado(int numAssociacao, int num) throws AssociadoNaoExistente {
+		java.sql.Connection c = Conexao.getConnection();
+		java.sql.PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		if(Conexao.isConnection(c)) {
+			try {
+				ArrayList<Associado> array = new ArrayList<Associado>();
+				stmt = c.prepareStatement("select * from associacao.associado;");
+				rs = stmt.executeQuery();
+				while(rs.next()) {
+					if(rs.getLong("remissao") == 0) {
+						Associado a = new Associado(rs.getInt("numero"), rs.getString("nome"), rs.getString("telefone"), 
+								rs.getLong("nascimento"), rs.getLong("data"));
+						a.setAssociacao(rs.getInt("associacao"));
+						array.add(a);
+					} else {
+						Associado a = new AssociadoRemido(rs.getInt("numero"), rs.getString("nome"), rs.getString("telefone"), 
+								rs.getLong("nascimento"), rs.getLong("data"), rs.getLong("remissao"));
+						a.setAssociacao(rs.getInt("associacao"));
+						array.add(a);
+					}
+				}
+				for(Associado associado : array) {
+					if(associado.getNumero() == num && associado.getAssociacao() == numAssociacao) {
+						return associado;
+					}
+				}
+				throw new AssociadoNaoExistente();
+			} catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        } finally {			
+				Conexao.closeConnection(c, stmt, rs);
+			}
+		} else System.out.println("Erro ao Conectar com o Banco de Dados!");
+		return null;
+	}
+	
+	
+	public void excluirAssociado(int associado) {
+		java.sql.Connection c = Conexao.getConnection();
+		java.sql.PreparedStatement stmt = null;
+		
+		if(Conexao.isConnection(c)) {
+			try {
+				stmt = c.prepareStatement("DELETE FROM associado WHERE numero = " + associado + ";");
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        } finally {	
+	        	Conexao.closeConnection(c, stmt);
+	        }
+		} else System.out.println("Erro ao Conectar com o Banco de Dados!");
+	}
+	
+	public void excluirTudo() {
+		java.sql.Connection c = Conexao.getConnection();
+		java.sql.PreparedStatement stmt = null;
+		
+		if(Conexao.isConnection(c)) {
+			try {
+				stmt = c.prepareStatement("truncate table associado");
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        } finally {	
+	        	Conexao.closeConnection(c, stmt);
+	        }
+		} else System.out.println("Erro ao Conectar com o Banco de Dados!");
+	}
+	
+	public void setNome(int associado, String nome) {
+		java.sql.Connection c = Conexao.getConnection();
+		java.sql.PreparedStatement stmt = null;
+		
+		if(Conexao.isConnection(c)) {
+			try {
+				stmt = c.prepareStatement("UPDATE associado SET nome = '" + nome + "' WHERE numero = " + associado + ";");
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        } finally {	
+	        	Conexao.closeConnection(c,stmt);
+	        }
+		} else System.out.println("Erro ao Conectar com o Banco de Dados!");
+	}
+	public void setNumero(int associado, int numero) {
+		java.sql.Connection c = Conexao.getConnection();
+		java.sql.PreparedStatement stmt = null;
+		
+		if(Conexao.isConnection(c)) {
+			try {
+				stmt = c.prepareStatement("UPDATE associado SET numero = '" + numero + "' WHERE numero = " + associado + ";");
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        } finally {	
+	        	Conexao.closeConnection(c,stmt);
+	        }
+		} else System.out.println("Erro ao Conectar com o Banco de Dados!");
+	}
+	public void setTelefone(int associado, String telefone) {
+		java.sql.Connection c = Conexao.getConnection();
+		java.sql.PreparedStatement stmt = null;
+		
+		if(Conexao.isConnection(c)) {
+			try {
+				stmt = c.prepareStatement("UPDATE associado SET telefone = '" + telefone + "' WHERE numero = " + associado + ";");
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        } finally {	
+	        	Conexao.closeConnection(c,stmt);
+	        }
+		} else System.out.println("Erro ao Conectar com o Banco de Dados!");
+	}
+	public void setNascimento(int associado, long nascimento) {
+		java.sql.Connection c = Conexao.getConnection();
+		java.sql.PreparedStatement stmt = null;
+		
+		if(Conexao.isConnection(c)) {
+			try {
+				stmt = c.prepareStatement("UPDATE associado SET nascimento = '" + nascimento + "' WHERE numero = " + associado + ";");
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        } finally {	
+	        	Conexao.closeConnection(c,stmt);
+	        }
+		} else System.out.println("Erro ao Conectar com o Banco de Dados!");
+	}
+	public void setDataAssociacao(int associado, long data) {
+		java.sql.Connection c = Conexao.getConnection();
+		java.sql.PreparedStatement stmt = null;
+		
+		if(Conexao.isConnection(c)) {
+			try {
+				stmt = c.prepareStatement("UPDATE associado SET data = '" + data + "' WHERE numero = " + associado + ";");
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        } finally {	
+	        	Conexao.closeConnection(c,stmt);
+	        }
+		} else System.out.println("Erro ao Conectar com o Banco de Dados!");
+	}	
+	public void setRemissao(int associado, long remissao) {
+		java.sql.Connection c = Conexao.getConnection();
+		java.sql.PreparedStatement stmt = null;
+		
+		if(Conexao.isConnection(c)) {
+			try {
+				stmt = c.prepareStatement("UPDATE associado SET remissao = '" + remissao + "' WHERE numero = " + associado + ";");
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        } finally {	
+	        	Conexao.closeConnection(c,stmt);
+	        }
+		} else System.out.println("Erro ao Conectar com o Banco de Dados!");
+	}
+}
