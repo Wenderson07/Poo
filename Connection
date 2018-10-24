@@ -1,0 +1,118 @@
+package bancoDeDados;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Conexao {
+	    
+	private	static final String url = "jdbc:mysql://localhost:3306/associacao";
+	private	static final String usuario = "root";
+	private	static final String senha = "1";
+	private static final String driver = "com.mysql.jdbc.Driver";
+	
+	public static Connection getConnection() {
+		try {
+				Class.forName(driver);
+				return DriverManager.getConnection(url, "root", "1");
+			}catch(ClassNotFoundException | SQLException e) {
+				throw new RuntimeException("Erro ao abrir conexao:");
+			}
+		}
+	
+	public static boolean isConnection(Connection c) {
+		if(c != null) {
+			return true;
+		} else return false;
+	}
+	
+	public static void closeConnection(Connection c) {
+		try {
+			if(c != null) {
+				c.close();
+			}	
+		} catch (SQLException e) {
+			System.out.println("Erro ao Fechar: " + e.getMessage());
+		}
+	}
+	
+	public static void closeConnection(Connection c, PreparedStatement stmt) {
+		closeConnection(c);
+		try {
+			if(stmt != null) {
+				stmt.close();
+			}	
+		} catch (SQLException e) {
+			System.out.println("Erro ao Fechar: " + e.getMessage());
+		}
+	}
+	
+	public static void closeConnection(Connection c, PreparedStatement stmt, ResultSet rs) {
+		closeConnection(c,stmt);
+		try {
+			if(rs != null) {
+				rs.close();
+			}	
+		} catch (SQLException e) {
+			System.out.println("Erro ao Fechar: " + e.getMessage());
+		}
+	}
+	
+	/*
+	public static void limparAssociacao(Connection c) {
+		try {
+			PreparedStatement stmt = c.prepareStatement("truncate table associacao");
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+            throw new RuntimeException(e);
+        }	
+	}
+	
+	public static void limparAssociado(Connection c) {
+		try {
+			PreparedStatement stmt = c.prepareStatement("truncate table associado");
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+            throw new RuntimeException(e);
+        }	
+	}
+	
+	public static void limparReuniao(Connection c) {
+		try {
+			PreparedStatement stmt = c.prepareStatement("truncate table reuniao");
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+            throw new RuntimeException(e);
+        }	
+	}
+	
+	public static void limparTaxa(Connection c) {
+		try {
+			PreparedStatement stmt = c.prepareStatement("truncate table taxa");
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+            throw new RuntimeException(e);
+        }	
+	}
+	
+	public static void limparFrequencia(Connection c) {
+		try {
+			PreparedStatement stmt = c.prepareStatement("truncate table frequencia");
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+            throw new RuntimeException(e);
+        }	
+	}
+	
+	public static void limparPagamento(Connection c) {
+		try {
+			PreparedStatement stmt = c.prepareStatement("truncate table pagamento");
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+            throw new RuntimeException(e);
+        }	
+	}
+	*/
+}
