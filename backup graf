@@ -1,0 +1,217 @@
+package grafos;
+import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class GraphGenerator {
+    public static final int MAX_VALUE = 999;
+
+	public static Graph carregarArquivo(){	
+		Graph grafo = new Graph();
+		try{
+            BufferedReader arquivo = new BufferedReader(new FileReader("C:/INPUT.TXT"));
+			Scanner scanner = new Scanner(arquivo);
+			Scanner leitura = scanner.useDelimiter(" ");
+			String string;
+		    ArrayList<String> array = new ArrayList<String>();
+            try { // Verifica tamanho do arquivo para saber os vertices
+				while ((string = arquivo.readLine())!=null){
+					array.add(string);				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+            
+			int vertices = array.size(); //Quantidade de vertices
+			int[][] matriz = new int[vertices][vertices]; 
+			for (int i = 0; i < vertices; i++) {
+				System.out.println("Criando  vertices... (" + (i+1) + "/" + vertices + ")");
+				Node n = grafo.CreateEmptyNode();
+				try {
+					grafo.Add(n); //Adiciona o vertice N 
+				}catch (ValidationException | ConflictingNodeException e) {
+					e.printStackTrace();
+					//e.getMessage();
+				}
+				System.out.println("No vazio [" + n.key + "] foi criado.");
+			}
+				
+			// Atribuindo pesos
+			for (int i = 0; i < vertices; i++) {
+				System.out.println("Atribuindo pesoss (" + (i+1) + "/" + vertices + ")");
+				Node n = grafo.nodeList.get(i);
+			//	while(leitura.hasNext()) {
+					for (int j = i; j < vertices; j++) {
+						//System.out.println(leitura.next());
+						System.out.println("Atribuindo pesos [" + n.key + "] (" + (j+1) + "/" + vertices + ")");
+						if (i == j) {
+							matriz [i][j] = 0;
+							continue;
+						} else {
+							matriz [i][j] = peso; //Matrix [i][j] recebe 
+							matriz [j][i] = matriz[i][j];
+						}
+					}
+				//}
+			}	
+			scanner.close();
+			/*while (leitura.hasNext()) {
+				int entrada = leitura.nextInt();
+				for (i = 1;i <= vertices; i++){
+		            for (int j = 1;j <= vertices; j++){
+		                matriz[i][j] = leitura.nextInt();
+		                if (i == j){
+		                    matriz[i][j] = 0;
+		                    continue;
+		                }
+		                if (matriz[i][j] == 0){
+		                    matriz[i][j] = MAX_VALUE;
+		                }
+		            }
+		        }*/
+		}catch(FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		return grafo;
+	}
+		/*
+		public static Graph GeradorDeGrafo(int tamanho) {
+			// Allocacao.
+			Graph grafo = new Graph();
+			int[][] matriz = new int[tamanho][tamanho]; //Aloca matriz recebendo o tamanho
+			
+			//Cria nós vazios
+			//		System.out.println("Creating nodes...");
+			for (int i = 0; i < tamanho; i++) {
+				System.out.println("Criando  nos... (" + (i+1) + "/" + tamanho + ")");
+				Node n = grafo.CreateEmptyNode();
+				try {
+					grafo.Add(n); //Adiciona o no N 
+				} catch (ValidationException | ConflictingNodeException e) {
+					e.printStackTrace();
+					//e.getMessage();
+				}
+				System.out.println("No vazio [" + n.key + "] foi criado.");
+			}
+			// Atribuindo pesos
+			for (int i = 0; i < tamanho; i++) {
+				System.out.println("Attributing pesoss (" + (i+1) + "/" + tamanho + ")");
+				Node n = grafo.nodeList.get(i);
+				for (int j = i; j < tamanho; j++) {
+					System.out.println("Atribuindo pesos [" + n.key + "] (" + (j+1) + "/" + tamanho + ")");
+					if (i == j) {
+						matrix [i][j] = 0;
+						continue;
+					} else {
+						Random r = new Random();
+						matrix [i][j] = r.nextInt() % max; //Matrix [i][j] recebe 
+						matrix [j][i] = matrix[i][j];
+					}
+				}
+			}
+			
+			// Link
+			for (int i = 0; i < tamanho; i++) {			
+				Node n = grafo.nodeList.get(i);
+//				System.out.println("Linking from [" + n.key + "]... (" + (i+1) + "/" + size + ")");
+				for (int j = i; j < tamanho; j++) {
+//					System.out.println("Operating link from [" + n.key + "]... (" + (j-i+1) + "/" + (size-i) + ")");
+					if (i == j) {
+//						System.out.println("\tSkipping operation [" + (i+1) +"] to [" + (j+1) + "]...");
+						continue;
+					}
+					try {
+//						System.out.println("\tGetting element reference from graph...: " + (j+1));
+						Node m = grafo.nodeList.get(j);
+//						System.out.print("\tLinking element...: ");
+//						System.out.print((n.key) + ", ");
+//						System.out.print((m.key) + ", ");
+//						System.out.println((matrix[i][j]));
+						n.link(m, matrix[i][j]);
+//						System.out.println("\tLinking element...: " + (n.key) + ", " + (m.key) + ", " + (matrix[j][i]));
+						m.link(n, matrix[j][i]);
+//						System.out.println("\tSucessful!");
+					} catch (Exception e) {
+//						System.out.println("[!]\tAn error has ocurred here!");
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			return grafo;
+		}
+		
+		*/		
+		
+	public static Graph FullConnectedGenerator(int size, int max) {
+		// Allocacao.
+		Graph result = new Graph();
+		float[][] matrix = new float[size][size]; //Aloca matriz recebendo o tamanho
+		
+		//Cria nos vazios
+		//		System.out.println("Creating nodes...");
+		for (int i = 0; i < size; i++) {
+			System.out.println("Creating nodes... (" + (i+1) + "/" + size + ")");
+			Node n = result.CreateEmptyNode();
+			try {
+				result.Add(n); //Adiciona o no N 
+			} catch (ValidationException | ConflictingNodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("Created empty node [" + n.key + "].");
+		}
+		// Attribute connection weights
+		for (int i = 0; i < size; i++) {
+//			System.out.println("Attributing connection weights (" + (i+1) + "/" + size + ")");
+			Node n = result.nodeList.get(i);
+			for (int j = i; j < size; j++) {
+//				System.out.println("Attributing connection weights from [" + n.key + "] (" + (j+1) + "/" + size + ")");
+				if (i == j) {
+					matrix [i][j] = 0;
+					continue;
+				} else {
+					Random r = new Random();
+					matrix [i][j] = r.nextInt() % max; //Matrix [i][j] recebe 
+					matrix [j][i] = matrix[i][j];
+				}
+			}
+		}
+		
+		// Link
+		for (int i = 0; i < size; i++) {			
+			Node n = result.nodeList.get(i);
+//			System.out.println("Linking from [" + n.key + "]... (" + (i+1) + "/" + size + ")");
+			for (int j = i; j < size; j++) {
+//				System.out.println("Operating link from [" + n.key + "]... (" + (j-i+1) + "/" + (size-i) + ")");
+				if (i == j) {
+//					System.out.println("\tSkipping operation [" + (i+1) +"] to [" + (j+1) + "]...");
+					continue;
+				}
+				try {
+//					System.out.println("\tGetting element reference from graph...: " + (j+1));
+					Node m = result.nodeList.get(j);
+					
+//					System.out.print("\tLinking element...: ");
+//					System.out.print((n.key) + ", ");
+//					System.out.print((m.key) + ", ");
+//					System.out.println((matrix[i][j]));
+					n.link(m, matrix[i][j]);
+//					System.out.println("\tLinking element...: " + (n.key) + ", " + (m.key) + ", " + (matrix[j][i]));
+					m.link(n, matrix[j][i]);
+//					System.out.println("\tSucessful!");
+				} catch (Exception e) {
+//					System.out.println("[!]\tAn error has ocurred here!");
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return result;
+	}
+}
